@@ -1,18 +1,15 @@
-# --- Build stage ---
-FROM rust:1.83-slim AS builder
-
+# --- Builder stage ---
+FROM rust:1.85-alpine AS builder
+RUN apk add --no-cache musl-dev
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 COPY src/ src/
-
-RUN cargo build --release && strip target/release/bch-api-rust
+RUN cargo build --release
 
 # --- Runtime stage ---
-FROM debian:bookworm-slim
+FROM gcr.io/distroless/static-debian12
 
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /app/target/release/bch-api-rust /usr/local/bin/bch-api-rust
+COPY --from=builder /app/target/release/bch-api-rust /bch-api-rust
 
 ENV PORT=5943
 ENV API_PREFIX=/v6
@@ -30,4 +27,4 @@ ENV USE_BASIC_AUTH=false
 
 EXPOSE 5943
 
-CMD ["bch-api-rust"]
+ENTRYPOINT ["/bch-api-rust"]
