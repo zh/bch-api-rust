@@ -1,0 +1,5 @@
+/target
+.env
+*.swp
+PRD.md
+start-rest-api.sh

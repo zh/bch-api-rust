@@ -1,0 +1,19 @@
+services:
+  bch-api-rust:
+    build: .
+    ports:
+      - "5943:5943"
+    environment:
+      - PORT=5943
+      - API_PREFIX=/v6
+      - NETWORK=mainnet
+      - RPC_BASEURL=http://host.docker.internal:8332
+      - RPC_USERNAME=
+      - RPC_PASSWORD=
+      - FULCRUM_API=http://host.docker.internal:3000
+      - SLP_INDEXER_API=http://host.docker.internal:5010
+      - X402_ENABLED=false
+      - USE_BASIC_AUTH=false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
